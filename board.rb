@@ -11,13 +11,14 @@ class Board
   end
   
   def move_piece(x1, y1, x2, y2)
-    unless piece = find_piece(x1, y1)
-      raise IllegalMoveError
-    end
-    unless piece.color == @turn
-      raise IllegalMoveError.new("It's #{@turn}'s turn")
-    end
+    check_legality
     piece.move(x2, y2)
+    swap_turn
+  end
+  
+  def capture(x1, y1, x2, y2)
+    check_legality
+    remove_captured(piece.capture(x2, y2))
     swap_turn
   end
   
@@ -43,7 +44,17 @@ class Board
     @pieces.select { |p| p.x == x && p.y == y }.first
   end
   
+  
   private
+  
+  def check_legality
+    unless piece = find_piece(x1, y1)
+      raise IllegalMoveError, "There's no piece on this field"
+    end
+    unless piece.color == @turn
+      raise IllegalMoveError, "It's #{@turn}'s turn"
+    end
+  end
   
   def initial_white
     coordinates = [[1, 1], [3, 1], [5, 1], [7, 1],
@@ -61,5 +72,9 @@ class Board
   
   def swap_turn
     @turn = @turn == :white ? :black : :white
+  end
+  
+  def remove_captured(piece)
+    @pieces.delete(piece)
   end
 end

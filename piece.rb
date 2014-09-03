@@ -31,6 +31,16 @@ class Piece
     end
   end
   
+  def capture(x, y)
+    if captured = legal_capture(x, y)
+      @x = x
+      @y = y
+      captured
+    else
+      raise IllegalMoveError, "Illegal capture"
+    end
+  end
+  
   def to_s
     letters = '_abcdefgh'
     "#{@color}, #{letters[@x]}#{@y}#{', king' if @king}"
@@ -39,11 +49,20 @@ class Piece
   private
   
   def legal(x, y)
-    # TODO czy jego kolej
     in_board(x, y) && empty(x, y) && if @king
       diagonal(x, y) && empty_between(x, y)
     else
       adjacent(x, y)
+    end
+  end
+  
+  def legal_capture(x, y)
+    if in_board(x, y) && empty(x, y)
+      if @king
+        false
+      else
+        piece_between(x, y) if two_fields(x, y)
+      end
     end
   end
   
@@ -77,5 +96,14 @@ class Piece
     else
       (a - 1).downto(b + 1).to_a
     end
+  end
+  
+  def two_fields(x, y)
+    (@x - x).abs == 2 && (@y - y).abs == 2
+  end
+  
+  def piece_between(x, y)
+    piece = @board.find_piece((@x + x) / 2, (@y + y) / 2)
+    piece if piece && piece.color != @color
   end
 end
