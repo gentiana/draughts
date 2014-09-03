@@ -7,13 +7,18 @@ class Board
   def initialize
     @size = 8
     @pieces = initial_white + initial_black
+    @turn = :white
   end
   
   def move_piece(x1, y1, x2, y2)
     unless piece = find_piece(x1, y1)
       raise IllegalMoveError
     end
+    unless piece.color == @turn
+      raise IllegalMoveError.new("It's #{@turn}'s turn")
+    end
     piece.move(x2, y2)
+    swap_turn
   end
   
   def show
@@ -52,5 +57,9 @@ class Board
                    [1, 7], [3, 7], [5, 7], [7, 7],
                    [2, 6], [4, 6], [6, 6], [8, 6]]
     coordinates.map { |x, y| Piece.new(self, :black, x, y) }
+  end
+  
+  def swap_turn
+    @turn = @turn == :white ? :black : :white
   end
 end

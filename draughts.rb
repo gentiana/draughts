@@ -12,10 +12,10 @@ class Draughts
       break if cmd == 'q' || cmd == 'quit'
       begin
         make_move(cmd)
-      rescue IllegalMoveError
-        puts "Illegal move, do something else"
+      rescue IllegalMoveError => e
+        puts e.message
       rescue ArgumentError
-        puts "Write four numbers to move piece"
+        puts "Write four numbers to move a piece"
       end
     end
   end
