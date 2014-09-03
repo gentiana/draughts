@@ -41,7 +41,7 @@ class Piece
   def legal(x, y)
     # TODO czy jego kolej
     in_board(x, y) && empty(x, y) && if @king
-      diagonal(x, y)
+      diagonal(x, y) && empty_between(x, y)
     else
       adjacent(x, y)
     end
@@ -56,7 +56,7 @@ class Piece
   end
   
   def adjacent(x, y)
-    [1, -1].include?(x - @x) && if @color == :white
+    (x - @x).abs == 1 && if @color == :white
       y == @y + 1
     else
       y == @y - 1
@@ -64,6 +64,18 @@ class Piece
   end
   
   def diagonal(x, y)
-    ((@x - x) == (@y - y)) && ((@x - x) == -(@y - y))
+    (@x != x) && ((@x - x).abs == (@y - y).abs)
+  end
+  
+  def empty_between(x, y)
+    (@x - x).abs == 1 || nums_between(@x, x).zip(nums_between(@y, y)).all? { |xx, yy| empty(xx, yy) }
+  end
+  
+  def nums_between(a, b)
+    if a < b
+      ((a + 1)..(b - 1)).to_a
+    else
+      (a - 1).downto(b + 1).to_a
+    end
   end
 end

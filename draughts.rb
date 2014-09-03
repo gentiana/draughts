@@ -9,7 +9,7 @@ class Draughts
     while true
       @board.show
       cmd = gets.strip
-      break if cmd == 'q'
+      break if cmd == 'q' || cmd == 'quit'
       begin
         make_move(cmd)
       rescue IllegalMoveError

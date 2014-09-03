@@ -13,7 +13,6 @@ class Board
     unless piece = find_piece(x1, y1)
       raise IllegalMoveError
     end
-    puts piece, x2, y2
     piece.move(x2, y2)
   end
   
